@@ -1,7 +1,6 @@
 package edu.luc.cs271.arrayqueue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FixedArrayQueue<E> implements SimpleQueue<E> {
@@ -24,30 +23,46 @@ public class FixedArrayQueue<E> implements SimpleQueue<E> {
     this.data = (E[]) new Object[capacity];
     this.size = 0;
     this.front = 0;
-    this.rear = capacity - 1;
+    this.rear = -1;
   }
 
   @Override
   public boolean offer(final E obj) {
-    // TODO
-    return false;
+    if (size >= capacity) {
+      return false;
+    }
+    for (Object checkObj : data) {
+      if (checkObj == obj) {
+        return false;
+      }
+    }
+    size++;
+    incrementRear();
+    data[rear] = obj;
+    return true;
   }
 
   @Override
   public E peek() {
-    // TODO
-    return null;
+    return data[front];
   }
 
   @Override
   public E poll() {
-    // TODO
+    if (size >= 1) {
+      size--;
+      E temp = data[front];
+      incrementFront();
+      return temp;
+    }
     return null;
   }
 
   @Override
   public boolean isEmpty() {
-    // TODO
+    if (size != 0) {
+      return false;
+    }
     return true;
   }
 
@@ -59,6 +74,23 @@ public class FixedArrayQueue<E> implements SimpleQueue<E> {
   @Override
   public List<E> asList() {
     // TODO implement using an ArrayList preallocated with the right size
-    return Arrays.asList();
+    ArrayList<E> list = new ArrayList<E>(size);
+    int temp = front;
+    for (int i = 0; i < size; i++) {
+      list.add(data[temp]);
+      temp++;
+      if (temp >= capacity) temp -= capacity;
+    }
+    return list;
+  }
+
+  private void incrementFront() {
+    front++;
+    if (front >= capacity) front -= capacity;
+  }
+
+  private void incrementRear() {
+    rear++;
+    if (rear >= capacity) rear -= capacity;
   }
 }
